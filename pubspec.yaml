@@ -76,7 +76,7 @@ flutter:
   fonts:
     - family: QuickSand
       fonts:
-        - asset: assets/fonts/QuickSand-Regular.ttf
+        - asset: assets/fonts/Quicksand-Regular.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
