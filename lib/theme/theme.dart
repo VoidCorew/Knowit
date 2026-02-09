@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:knowit/screens/home_screen.dart';
-import 'package:knowit/screens/tabs_screen.dart';
+import 'package:knowit/screens/collections_screen.dart';
 
 class Knowit extends StatelessWidget {
   const Knowit({super.key});
@@ -26,7 +25,7 @@ class Knowit extends StatelessWidget {
         ),
         fontFamily: "QuickSand",
       ),
-      home: TabsScreen(),
+      home: CollectionsScreen(),
     );
   }
 }

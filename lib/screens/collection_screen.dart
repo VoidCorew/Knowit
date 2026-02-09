@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:knowit/models/card_item.dart';
+import 'package:knowit/tabs/cards_tab.dart';
+import 'package:knowit/tabs/overview_tab.dart';
+import 'package:knowit/tabs/stats_tab.dart';
 
-class CollectionScreen extends StatelessWidget {
+enum CollectionTab { overview, cards, stats }
+
+class CollectionScreen extends StatefulWidget {
+  final String collectionId;
   final String name;
   final String emoji;
   final Color color;
@@ -10,6 +17,7 @@ class CollectionScreen extends StatelessWidget {
 
   const CollectionScreen({
     super.key,
+    required this.collectionId,
     required this.name,
     required this.emoji,
     required this.color,
@@ -17,6 +25,13 @@ class CollectionScreen extends StatelessWidget {
     required this.progress,
     required this.createdAt,
   });
+
+  @override
+  State<CollectionScreen> createState() => _CollectionScreenState();
+}
+
+class _CollectionScreenState extends State<CollectionScreen> {
+  CollectionTab _tab = CollectionTab.overview;
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +45,11 @@ class CollectionScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: Row(
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 28)),
+            Text(widget.emoji, style: const TextStyle(fontSize: 28)),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                name,
+                widget.name,
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: onColor,
                   fontWeight: FontWeight.bold,
@@ -44,73 +59,71 @@ class CollectionScreen extends StatelessWidget {
           ],
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Center(
-              child: SizedBox(
-                width: 100,
-                height: 100,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    CircularProgressIndicator(
-                      value: progress,
-                      strokeWidth: 8,
-                      strokeCap: StrokeCap.round,
-                      color: color,
-                      backgroundColor: color.withValues(alpha: 0.2),
-                    ),
-                    Text(
-                      "${(progress * 100).round()}%",
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            Text(
-              "$cardCount cards, 58 cards for repeat",
-              style: theme.textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              "Next review in 10 minutes",
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            Center(
-              child: FilledButton(
-                onPressed: () {},
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                    vertical: 16,
+      body: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              SegmentedButton<CollectionTab>(
+                segments: const [
+                  ButtonSegment(
+                    value: CollectionTab.overview,
+                    label: Text("Overview"),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                  ButtonSegment(
+                    value: CollectionTab.cards,
+                    label: Text("Cards"),
                   ),
-                ),
-                child: const Text(
-                  "Start Studying",
-                  style: TextStyle(fontSize: 16),
+                  ButtonSegment(
+                    value: CollectionTab.stats,
+                    label: Text("Stats"),
+                  ),
+                ],
+                selected: {_tab},
+                onSelectionChanged: (value) {
+                  setState(() => _tab = value.first);
+                },
+              ),
+
+              const SizedBox(height: 16),
+
+              // Expanded(child: _buildContent()),
+              Expanded(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  switchInCurve: Curves.easeInOut,
+                  switchOutCurve: Curves.easeInOut,
+                  transitionBuilder: (child, animation) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                  child: _buildContent(),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Widget _buildContent() {
+    switch (_tab) {
+      case CollectionTab.overview:
+        return OverviewTab(
+          color: widget.color,
+          progress: widget.progress,
+          cardCount: widget.cardCount,
+        );
+      case CollectionTab.cards:
+        return CardsTab(
+          // cards: [],
+          collectionId: widget.collectionId,
+          onAddCard: (CardItem p1) {},
+          onDeleteCard: (CardItem p1) {},
+        );
+      case CollectionTab.stats:
+        return StatsTab();
+    }
   }
 }

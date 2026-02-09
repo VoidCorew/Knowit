@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:knowit/models/collection.dart';
+import 'package:knowit/widgets/custom_button.dart';
 
-class CreateCollection extends StatefulWidget {
-  const CreateCollection({super.key});
+class CreateCollectionScreen extends StatefulWidget {
+  const CreateCollectionScreen({super.key});
 
   @override
-  State<CreateCollection> createState() => _CreateCollectionState();
+  State<CreateCollectionScreen> createState() => _CreateCollectionScreenState();
 }
 
-class _CreateCollectionState extends State<CreateCollection> {
+class _CreateCollectionScreenState extends State<CreateCollectionScreen> {
   final TextEditingController collectionName = TextEditingController();
   final TextEditingController collectionEmoji = TextEditingController();
   Color selectedColor = Colors.red;
@@ -60,21 +61,20 @@ class _CreateCollectionState extends State<CreateCollection> {
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Row(
-                          children: [
-                            Expanded(child: Divider(thickness: 2)),
-                            Padding(
-                              padding: const EdgeInsetsGeometry.symmetric(
-                                horizontal: 8,
-                              ),
-                              child: const Text("Creation"),
-                            ),
-                            Expanded(child: Divider(thickness: 2)),
-                          ],
-                        ),
+                        // Row(
+                        //   children: [
+                        //     Expanded(child: Divider(thickness: 2)),
+                        //     Padding(
+                        //       padding: const EdgeInsetsGeometry.symmetric(
+                        //         horizontal: 8,
+                        //       ),
+                        //       child: const Text("Creation"),
+                        //     ),
+                        //     Expanded(child: Divider(thickness: 2)),
+                        //   ],
+                        // ),
 
-                        const SizedBox(height: 15),
-
+                        // const SizedBox(height: 15),
                         TextField(
                           controller: collectionName,
                           maxLength: 32,
@@ -182,27 +182,14 @@ class _CreateCollectionState extends State<CreateCollection> {
                 left: 16,
                 right: 16,
                 bottom: 16,
-                child: _createButton(context),
+                child: CustomButton(
+                  text: "Create Collection",
+                  onPressed: createCollection,
+                ),
               ),
             ],
           );
         },
-      ),
-    );
-  }
-
-  Widget _createButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: createCollection,
-      style: ElevatedButton.styleFrom(
-        minimumSize: Size(double.infinity, 50),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.circular(12),
-        ),
-      ),
-      child: const Text(
-        "Create Collection",
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -227,7 +214,8 @@ class _CreateCollectionState extends State<CreateCollection> {
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: name,
       emoji: emoji,
-      color: selectedColor,
+      // color: selectedColor,
+      colorValue: selectedColor.toARGB32(),
       cardCount: 0,
       progress: 0.0,
     );
